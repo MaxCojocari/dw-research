@@ -4,7 +4,7 @@ import { InjectRedis } from '@nestjs-modules/ioredis';
 import { InjectRepository } from '@nestjs/typeorm';
 import Redis from 'ioredis';
 import { Repository } from 'typeorm';
-import { Wallet } from '../../../libs/common/src/schemas/wallet.entity';
+import { Wallet } from '../../../libs/common/src/entities/wallet.entity';
 import { getShardName } from '../../../libs/common/src/utils/shard.util';
 
 @Injectable()

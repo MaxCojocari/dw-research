@@ -4,17 +4,21 @@ import {
   Column,
   CreateDateColumn,
 } from 'typeorm';
+import { EventType } from '../enums/event-type.enum';
 
 @Entity('events')
 export class Event {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  type: string;
+  @Column({
+    type: 'enum',
+    enum: EventType,
+  })
+  type: EventType;
 
   @Column({ type: 'jsonb' })
-  payload: any;
+  payload: Record<string, any>;
 
   @CreateDateColumn()
   createdAt: Date;
