@@ -1,11 +1,10 @@
 import {
   BadRequestException,
-  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { getShardName } from '../common/shard.util';
 import { Wallet } from './entities/wallet.entity';
 import { v4 as uuidv4 } from 'uuid';
@@ -102,6 +101,7 @@ export class WalletService {
     );
     return wallet;
   }
+
   async createWallet(dto: CreateWalletDto) {
     const repo = this.getRepo(dto.accountId);
     const existing = await repo.findOne({

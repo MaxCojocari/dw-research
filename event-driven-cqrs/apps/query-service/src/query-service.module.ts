@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { QueryServiceController } from './query-service.controller';
 import { QueryServiceService } from './query-service.service';
-import { API_GATEWAY } from '@app/common/constants';
-import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RedisModule, RedisSingleOptions } from '@nestjs-modules/ioredis';
