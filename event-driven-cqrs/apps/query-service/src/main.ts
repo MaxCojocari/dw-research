@@ -1,17 +1,16 @@
 import { NestFactory } from '@nestjs/core';
-import { QueryServiceModule } from './query-service.module';
+import { QueryModule } from './query.module';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { validationPipeOptions } from '@app/common/config/configuration.schema';
 
 async function bootstrap() {
-  const app = await NestFactory.create(QueryServiceModule);
-  const configService = app.get<ConfigService>(ConfigService);
+  const appContext = await NestFactory.createApplicationContext(QueryModule);
+  const configService = appContext.get(ConfigService);
 
-  app.useGlobalPipes(new ValidationPipe(validationPipeOptions));
-
-  app.connectMicroservice<MicroserviceOptions>(
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
+    QueryModule,
     {
       transport: Transport.REDIS,
       options: {
@@ -19,8 +18,10 @@ async function bootstrap() {
         port: configService.get('redis.port'),
       },
     },
-    { inheritAppConfig: true },
   );
-  await app.startAllMicroservices();
+
+  app.useGlobalPipes(new ValidationPipe(validationPipeOptions));
+
+  await app.listen();
 }
 bootstrap();

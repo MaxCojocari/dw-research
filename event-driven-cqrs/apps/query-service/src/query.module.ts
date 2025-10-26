@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
-import { ProjectionServiceController } from './projection-service.controller';
-import { ProjectionServiceService } from './projection-service.service';
+import { QueryController } from './query.controller';
+import { QueryService } from './query.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { RedisModule, RedisSingleOptions } from '@nestjs-modules/ioredis';
 
 @Module({
   imports: [
@@ -36,8 +37,20 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         synchronize: true,
       }),
     }),
+    RedisModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: async (config: ConfigService) => {
+        const host = config.get('redis.host');
+        const port = config.get('redis.port');
+        const res: RedisSingleOptions = {
+          type: 'single',
+          url: `redis://${host}:${port}`,
+        };
+        return res;
+      },
+    }),
   ],
-  controllers: [ProjectionServiceController],
-  providers: [ProjectionServiceService],
+  controllers: [QueryController],
+  providers: [QueryService],
 })
-export class ProjectionServiceModule {}
+export class QueryModule {}

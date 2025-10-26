@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { QueryServiceModule } from './../src/query-service.module';
+import { QueryServiceModule } from '../src/query.module';
 
 describe('QueryServiceController (e2e)', () => {
   let app: INestApplication;

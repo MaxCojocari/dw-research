@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Wallet } from '../../../libs/common/src/schemas/wallet.entity';
+import { Event } from '../../../libs/common/src/schemas/event.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TransferBalanceDto } from '../../../libs/common/src/dto/transfer-balance.dto';
@@ -13,7 +14,7 @@ import { CreateWalletDto } from '../../../libs/common/src/dto/create-wallet.dto'
 import { UpdateWalletDto } from '../../../libs/common/src/dto/update-wallet.dto';
 
 @Injectable()
-export class CommandServiceService {
+export class CommandService {
   private readonly CACHE_TTL = 60; // seconds
 
   constructor(
@@ -21,6 +22,8 @@ export class CommandServiceService {
     private readonly walletRepoShard1: Repository<Wallet>,
     @InjectRepository(Wallet, 'shard-2')
     private readonly walletRepoShard2: Repository<Wallet>,
+    @InjectRepository(Event, 'event-store')
+    private readonly eventRepo: Repository<Event>,
   ) {}
 
   private getRepo(accountId: string): Repository<Wallet> {

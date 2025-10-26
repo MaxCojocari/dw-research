@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { ProjectionServiceModule } from './../src/projection-service.module';
+import { ProjectionServiceModule } from '../src/projection.module';
 
 describe('ProjectionServiceController (e2e)', () => {
   let app: INestApplication;

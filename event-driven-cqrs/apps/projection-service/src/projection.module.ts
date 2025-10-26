@@ -1,26 +1,11 @@
 import { Module } from '@nestjs/common';
-import { CommandServiceController } from './command-service.controller';
-import { CommandServiceService } from './command-service.service';
+import { ProjectionController } from './projection.controller';
+import { ProjectionService } from './projection.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
-    TypeOrmModule.forRootAsync({
-      name: 'event-store',
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get('database.eventStore.host'),
-        port: configService.get('database.eventStore.port'),
-        username: configService.get('database.eventStore.user'),
-        password: configService.get('database.eventStore.password'),
-        database: configService.get('database.eventStore.db'),
-        autoLoadEntities: true,
-        synchronize: true,
-      }),
-    }),
     TypeOrmModule.forRootAsync({
       name: 'shard-1',
       imports: [ConfigModule],
@@ -52,7 +37,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       }),
     }),
   ],
-  controllers: [CommandServiceController],
-  providers: [CommandServiceService],
+  controllers: [ProjectionController],
+  providers: [ProjectionService],
 })
-export class CommandServiceModule {}
+export class ProjectionModule {}
