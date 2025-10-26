@@ -10,10 +10,6 @@ services:
   postgres-partition-1:
     image: postgres:17.0
     container_name: saga-pg1
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: letmein
-      POSTGRES_DB: db
     ports:
       - 5432:5432
     volumes:
@@ -22,11 +18,19 @@ services:
   postgres-partition-2:
     image: postgres:17.0
     container_name: saga-pg2
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: letmein
-      POSTGRES_DB: db
     ports:
       - 5433:5432
     volumes:
       - /data/postgres:/data/postgres
+
+  redis:
+    image: redis/redis-stack
+    container_name: saga-redis
+    ports:
+      - 6379:6379
+      - 8001:8001
+    volumes:
+      - redis-data:/data/redis
+
+volumes:
+  redis-data:
