@@ -9,6 +9,7 @@ export class ProjectionController {
 
   @EventPattern('wallet')
   updateBalance(@Payload() event: Event) {
-    this.projectionService.handleEvent(event);
+    console.log('projection-service received event:', event);
+    // return this.projectionService.handleEvent(event);
   }
 }

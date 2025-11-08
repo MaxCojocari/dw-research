@@ -12,6 +12,7 @@ import { configurationSchema } from './config/configuration.schema';
       ],
       load: [configuration],
       validationSchema: configurationSchema,
+      expandVariables: true,
       isGlobal: true,
     }),
   ],

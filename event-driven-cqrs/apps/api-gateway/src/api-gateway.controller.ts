@@ -13,7 +13,7 @@ import { CreateWalletDto } from '@app/common/dto/create-wallet.dto';
 import { TransferBalanceDto } from '@app/common/dto/transfer-balance.dto';
 import { UpdateWalletDto } from '@app/common/dto/update-wallet.dto';
 
-@Controller()
+@Controller('wallet')
 export class ApiGatewayController {
   constructor(private readonly apiGatewayService: ApiGatewayService) {}
 

@@ -4,9 +4,11 @@ import { ApiGatewayService } from './api-gateway.service';
 import { COMMAND_SERVICE, QUERY_SERVICE } from '@app/common/constants';
 import { ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { CommonModule } from '@app/common';
 
 @Module({
   imports: [
+    CommonModule,
     ClientsModule.registerAsync([
       {
         name: COMMAND_SERVICE,

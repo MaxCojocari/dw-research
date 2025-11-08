@@ -17,7 +17,7 @@ export class Event {
   })
   type: EventType;
 
-  @Column({ type: 'jsonb' })
+  @Column({ type: 'jsonb', nullable: false, default: {} })
   payload: Record<string, any>;
 
   @CreateDateColumn()

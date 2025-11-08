@@ -20,6 +20,9 @@ async function bootstrap() {
             `${configService.get('kafka.host')}:${configService.get('kafka.port')}`,
           ],
         },
+        consumer: {
+          groupId: 'projectors',
+        },
       },
     },
   );

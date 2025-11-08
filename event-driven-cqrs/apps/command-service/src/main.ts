@@ -4,6 +4,7 @@ import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
 import { validationPipeOptions } from '@app/common/config/configuration.schema';
 import { ValidationPipe } from '@nestjs/common';
+import { DataSource } from 'typeorm';
 
 async function bootstrap() {
   const appContext = await NestFactory.createApplicationContext(CommandModule);

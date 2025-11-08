@@ -14,20 +14,21 @@ import { getShardName } from '@app/common/utils/shard.util';
 import { CreateWalletDto } from '@app/common/dto/create-wallet.dto';
 import { UpdateWalletDto } from '@app/common/dto/update-wallet.dto';
 import { PROJECTION_SERVICE } from '@app/common/constants';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientKafkaProxy } from '@nestjs/microservices';
 import { EventType } from '@app/common/enums/event-type.enum';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class CommandService {
   constructor(
+    @InjectRepository(Event, 'event-store')
+    private readonly eventRepo: Repository<Event>,
     @InjectRepository(Wallet, 'shard-1')
     private readonly walletRepoShard1: Repository<Wallet>,
     @InjectRepository(Wallet, 'shard-2')
     private readonly walletRepoShard2: Repository<Wallet>,
-    @InjectRepository(Event, 'event-store')
-    private readonly eventRepo: Repository<Event>,
     @Inject(PROJECTION_SERVICE)
-    private readonly projectionService: ClientProxy,
+    private readonly projectionService: ClientKafkaProxy,
   ) {}
 
   private getRepo(accountId: string): Repository<Wallet> {
@@ -36,6 +37,7 @@ export class CommandService {
   }
 
   async transferBalance(dto: TransferBalanceDto) {
+    console.log('command-service transferBalance');
     const { fromAccount, toAccount, amount, currency } = dto;
     if (amount <= 0) throw new BadRequestException('Invalid amount');
 
@@ -71,18 +73,29 @@ export class CommandService {
   }
 
   async createWallet(dto: CreateWalletDto & { accountId: string }) {
+    console.log('command-service createWallet dto:', dto);
+
     const repo = this.getRepo(dto.accountId);
     const existing = await repo.findOne({
       where: { accountId: dto.accountId },
     });
     if (existing) throw new BadRequestException('Wallet already exists');
 
+    console.log('command-service createWallet existing:', existing);
+
     const event = this.eventRepo.create({
       type: EventType.WalletCreated,
       payload: dto,
     });
+
+    console.log('command-service createWallet event:', event);
     await this.eventRepo.save(event);
-    this.projectionService.emit('wallet', event);
+
+    console.log('command-service createWallet saved event');
+    const res = await firstValueFrom(
+      this.projectionService.emit('wallet', event),
+    );
+    return res;
   }
 
   async updateWallet(dto: UpdateWalletDto & { accountId: string }) {

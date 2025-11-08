@@ -4,10 +4,14 @@ import { CommandService } from './command.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { PROJECTION_SERVICE } from '../../../libs/common/src/constants';
+import { PROJECTION_SERVICE } from '@app/common/constants';
+import { CommonModule } from '@app/common';
+import { Wallet } from '@app/common/entities/wallet.entity';
+import { Event } from '@app/common/entities/event.entity';
 
 @Module({
   imports: [
+    CommonModule,
     ClientsModule.registerAsync([
       {
         name: PROJECTION_SERVICE,
@@ -18,6 +22,9 @@ import { PROJECTION_SERVICE } from '../../../libs/common/src/constants';
               brokers: [
                 `${configService.get('kafka.host')}:${configService.get('kafka.port')}`,
               ],
+            },
+            consumer: {
+              groupId: 'projectors',
             },
           },
         }),
@@ -69,6 +76,9 @@ import { PROJECTION_SERVICE } from '../../../libs/common/src/constants';
         synchronize: true,
       }),
     }),
+    TypeOrmModule.forFeature([Event], 'event-store'),
+    TypeOrmModule.forFeature([Wallet], 'shard-1'),
+    TypeOrmModule.forFeature([Wallet], 'shard-2'),
   ],
   controllers: [CommandController],
   providers: [CommandService],

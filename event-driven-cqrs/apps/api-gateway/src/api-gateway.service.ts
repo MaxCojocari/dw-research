@@ -5,7 +5,7 @@ import { lastValueFrom } from 'rxjs';
 import { TransferBalanceDto } from '@app/common/dto/transfer-balance.dto';
 import { CreateWalletDto } from '@app/common/dto/create-wallet.dto';
 import { UpdateWalletDto } from '@app/common/dto/update-wallet.dto';
-import { GetBalanceDto } from '../../../libs/common/src/dto/get-balance.dto';
+import { GetBalanceDto } from '@app/common/dto/get-balance.dto';
 
 @Injectable()
 export class ApiGatewayService {
@@ -17,26 +17,29 @@ export class ApiGatewayService {
   ) {}
 
   async getBalance(dto: GetBalanceDto) {
+    console.log('api-gateway getBalance');
     const wallet = await lastValueFrom(
       this.queryService.send('query.getBalance', dto),
     );
-    console.log({ wallet });
+    console.log({ serivce: 'api-gateway', wallet });
     return wallet;
   }
 
   async transferBalance(dto: TransferBalanceDto) {
+    console.log('api-gateway transferBalance');
     const res = await lastValueFrom(
       this.commandService.send('command.transferBalance', dto),
     );
-    console.log({ res });
+    console.log({ serivce: 'api-gateway', res });
     return res;
   }
 
   async createWallet(dto: CreateWalletDto) {
+    console.log('api-gateway createWallet');
     const res = await lastValueFrom(
       this.commandService.send('command.createWallet', dto),
     );
-    console.log({ res });
+    console.log({ serivce: 'api-gateway', res });
     return res;
   }
 
@@ -44,7 +47,7 @@ export class ApiGatewayService {
     const res = await lastValueFrom(
       this.commandService.send('command.updateWallet', { accountId, ...dto }),
     );
-    console.log({ res });
+    console.log({ serivce: 'api-gateway', res });
     return res;
   }
 
@@ -52,7 +55,7 @@ export class ApiGatewayService {
     const res = await lastValueFrom(
       this.commandService.send('command.updateWallet', { accountId }),
     );
-    console.log({ res });
+    console.log({ serivce: 'api-gateway', res });
     return res;
   }
 }

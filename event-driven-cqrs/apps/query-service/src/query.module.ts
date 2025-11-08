@@ -4,9 +4,12 @@ import { QueryService } from './query.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RedisModule, RedisSingleOptions } from '@nestjs-modules/ioredis';
+import { CommonModule } from '@app/common';
+import { Wallet } from '@app/common/entities/wallet.entity';
 
 @Module({
   imports: [
+    CommonModule,
     TypeOrmModule.forRootAsync({
       name: 'shard-1',
       imports: [ConfigModule],
@@ -37,6 +40,8 @@ import { RedisModule, RedisSingleOptions } from '@nestjs-modules/ioredis';
         synchronize: true,
       }),
     }),
+    TypeOrmModule.forFeature([Wallet], 'shard-1'),
+    TypeOrmModule.forFeature([Wallet], 'shard-2'),
     RedisModule.forRootAsync({
       inject: [ConfigService],
       useFactory: async (config: ConfigService) => {

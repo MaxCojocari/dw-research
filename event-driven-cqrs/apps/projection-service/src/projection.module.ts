@@ -3,9 +3,12 @@ import { ProjectionController } from './projection.controller';
 import { ProjectionService } from './projection.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CommonModule } from '@app/common';
+import { Wallet } from '@app/common/entities/wallet.entity';
 
 @Module({
   imports: [
+    CommonModule,
     TypeOrmModule.forRootAsync({
       name: 'shard-1',
       imports: [ConfigModule],
@@ -36,6 +39,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         synchronize: true,
       }),
     }),
+    TypeOrmModule.forFeature([Wallet], 'shard-1'),
+    TypeOrmModule.forFeature([Wallet], 'shard-2'),
   ],
   controllers: [ProjectionController],
   providers: [ProjectionService],
