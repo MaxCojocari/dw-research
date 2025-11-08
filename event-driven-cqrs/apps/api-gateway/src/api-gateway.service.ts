@@ -6,6 +6,8 @@ import { TransferBalanceDto } from '@app/common/dto/transfer-balance.dto';
 import { CreateWalletDto } from '@app/common/dto/create-wallet.dto';
 import { UpdateWalletDto } from '@app/common/dto/update-wallet.dto';
 import { GetBalanceDto } from '@app/common/dto/get-balance.dto';
+import { promisifyObservable } from '../../../libs/common/src/utils/observable';
+import { raiseHttpException } from '../../../libs/common/src/utils/exception-mapper';
 
 @Injectable()
 export class ApiGatewayService {
@@ -27,20 +29,32 @@ export class ApiGatewayService {
 
   async transferBalance(dto: TransferBalanceDto) {
     console.log('api-gateway transferBalance');
-    const res = await lastValueFrom(
-      this.commandService.send('command.transferBalance', dto),
-    );
-    console.log({ serivce: 'api-gateway', res });
-    return res;
+    try {
+      const res = await lastValueFrom(
+        this.commandService.send('command.transferBalance', dto),
+      );
+      return res;
+    } catch (error) {
+      if (error?.message && error?.code) {
+        raiseHttpException(error.code, error.message);
+      }
+      throw error;
+    }
   }
 
   async createWallet(dto: CreateWalletDto) {
     console.log('api-gateway createWallet');
-    const res = await lastValueFrom(
-      this.commandService.send('command.createWallet', dto),
-    );
-    console.log({ serivce: 'api-gateway', res });
-    return res;
+    try {
+      const res = await promisifyObservable(
+        this.commandService.send('command.createWallet', dto),
+      );
+      return res;
+    } catch (error) {
+      if (error?.message && error?.code) {
+        raiseHttpException(error.code, error.message);
+      }
+      throw error;
+    }
   }
 
   async updateWallet(accountId: string, dto: UpdateWalletDto) {

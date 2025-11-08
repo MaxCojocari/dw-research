@@ -15,8 +15,8 @@ export const configurationSchema = Joi.object({
   APP_PORT: Joi.number().required(),
   REDIS_HOST: Joi.string().required(),
   REDIS_PORT: Joi.number().default(6379),
-  KAFKA_HOST: Joi.string().required(),
-  KAFKA_PORT: Joi.number().default(9092),
+  RMQ_URL: Joi.string().required(),
+  QUEUE_NAME: Joi.string().required(),
 });
 
 export const validationPipeOptions: ValidationPipeOptions = {

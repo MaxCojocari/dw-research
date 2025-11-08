@@ -3,11 +3,11 @@ import { CommandController } from './command.controller';
 import { CommandService } from './command.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ClientsModule, Transport } from '@nestjs/microservices';
 import { PROJECTION_SERVICE } from '@app/common/constants';
 import { CommonModule } from '@app/common';
 import { Wallet } from '@app/common/entities/wallet.entity';
 import { Event } from '@app/common/entities/event.entity';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
@@ -16,15 +16,12 @@ import { Event } from '@app/common/entities/event.entity';
       {
         name: PROJECTION_SERVICE,
         useFactory: (configService: ConfigService) => ({
-          transport: Transport.KAFKA,
+          transport: Transport.RMQ,
           options: {
-            client: {
-              brokers: [
-                `${configService.get('kafka.host')}:${configService.get('kafka.port')}`,
-              ],
-            },
-            consumer: {
-              groupId: 'projectors',
+            urls: [configService.get('rabbit.url')],
+            queue: configService.get('queue'),
+            queueOptions: {
+              durable: true,
             },
           },
         }),

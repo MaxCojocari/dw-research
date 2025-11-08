@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
@@ -14,9 +15,8 @@ import { getShardName } from '@app/common/utils/shard.util';
 import { CreateWalletDto } from '@app/common/dto/create-wallet.dto';
 import { UpdateWalletDto } from '@app/common/dto/update-wallet.dto';
 import { PROJECTION_SERVICE } from '@app/common/constants';
-import { ClientKafkaProxy } from '@nestjs/microservices';
+import { ClientProxy } from '@nestjs/microservices';
 import { EventType } from '@app/common/enums/event-type.enum';
-import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class CommandService {
@@ -28,7 +28,7 @@ export class CommandService {
     @InjectRepository(Wallet, 'shard-2')
     private readonly walletRepoShard2: Repository<Wallet>,
     @Inject(PROJECTION_SERVICE)
-    private readonly projectionService: ClientKafkaProxy,
+    private readonly projectionService: ClientProxy,
   ) {}
 
   private getRepo(accountId: string): Repository<Wallet> {
@@ -53,8 +53,17 @@ export class CommandService {
     });
 
     if (!fromWallet || fromWallet.balance < amount)
-      throw new BadRequestException('Insufficient balance');
-    if (!toWallet) throw new BadRequestException('Target wallet not found');
+      return {
+        message: 'error',
+        code: HttpStatus.BAD_REQUEST,
+        reason: 'Insufficient balance',
+      };
+    if (!toWallet)
+      return {
+        message: 'error',
+        code: HttpStatus.BAD_REQUEST,
+        reason: 'Target wallet not found',
+      };
 
     // Create and persist events
     const debitEvent = this.eventRepo.create({
@@ -70,32 +79,31 @@ export class CommandService {
     // Emit to Projection Service
     this.projectionService.emit('wallet', debitEvent);
     this.projectionService.emit('wallet', creditEvent);
+
+    return { message: 'success' };
   }
 
   async createWallet(dto: CreateWalletDto & { accountId: string }) {
-    console.log('command-service createWallet dto:', dto);
-
     const repo = this.getRepo(dto.accountId);
     const existing = await repo.findOne({
       where: { accountId: dto.accountId },
     });
-    if (existing) throw new BadRequestException('Wallet already exists');
-
-    console.log('command-service createWallet existing:', existing);
+    if (existing)
+      return {
+        message: 'error',
+        code: HttpStatus.BAD_REQUEST,
+        reason: 'Wallet already exists',
+      };
 
     const event = this.eventRepo.create({
       type: EventType.WalletCreated,
       payload: dto,
     });
 
-    console.log('command-service createWallet event:', event);
     await this.eventRepo.save(event);
 
-    console.log('command-service createWallet saved event');
-    const res = await firstValueFrom(
-      this.projectionService.emit('wallet', event),
-    );
-    return res;
+    this.projectionService.emit('wallet', event);
+    return { message: 'success', wallet: dto };
   }
 
   async updateWallet(dto: UpdateWalletDto & { accountId: string }) {

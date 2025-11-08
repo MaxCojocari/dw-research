@@ -31,8 +31,8 @@ export default () => ({
     host: process.env.REDIS_HOST,
     port: process.env.REDIS_PORT,
   },
-  kafka: {
-    host: process.env.KAFKA_HOST,
-    port: process.env.KAFKA_PORT,
+  rabbit: {
+    url: process.env.RMQ_URL,
   },
+  queue: process.env.QUEUE_NAME,
 });
