@@ -4,38 +4,48 @@ services:
     build:
       context: .
       dockerfile: ./apps/api-gateway/Dockerfile
+    env_file:
+      - .env.example
     ports:
-      - 3000:3000
+      - 3001:3001
 
   command-service:
     container_name: command-service
     build:
       context: .
       dockerfile: ./apps/command-service/Dockerfile
+    env_file:
+      - .env.example
     ports:
-      - 3001:3000
+      - 3002:3002
 
   projection-service:
     container_name: projection-service
     build:
       context: .
       dockerfile: ./apps/projection-service/Dockerfile
+    env_file:
+      - .env.example
     ports:
-      - 3002:3000
+      - 3003:3003
 
   query-service:
     container_name: query-service
     build:
       context: .
       dockerfile: ./apps/query-service/Dockerfile
+    env_file:
+      - .env.example
     ports:
-      - 3003:3000
+      - 3004:3004
 
   postgres-partition-1:
     image: postgres:17.0
     container_name: event-driven-cqrs-pg1
     ports:
       - 5434:5432
+    env_file:
+      - .env.example
     volumes:
       - /data/postgres:/data/postgres
 
@@ -44,6 +54,8 @@ services:
     container_name: event-driven-cqrs-pg2
     ports:
       - 5435:5432
+    env_file:
+      - .env.example
     volumes:
       - /data/postgres:/data/postgres
 
@@ -52,14 +64,17 @@ services:
     container_name: event-driven-cqrs-event-store-pg
     ports:
       - 5436:5432
+    env_file:
+      - .env.example
     volumes:
       - /data/postgres:/data/postgres
 
-  kafka:
-    image: apache/kafka-native:4.0.1
-    container_name: kafka
+  rabbit:
+    image: rabbitmq:3.13.3-management-alpine
+    container_name: 'rabbitmq'
     ports:
-      - 9092:9092
+      - 5672:5672
+      - 15672:15672
 
   redis:
     image: redis/redis-stack

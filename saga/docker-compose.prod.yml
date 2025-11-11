@@ -4,14 +4,18 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
+    env_file:
+      - .env.example
     ports:
-      - 3004:3000
+      - 3000:3000
 
   postgres-partition-1:
     image: postgres:17.0
     container_name: saga-pg1
     ports:
       - 5432:5432
+    env_file:
+      - .env.example
     volumes:
       - /data/postgres:/data/postgres
 
@@ -20,6 +24,8 @@ services:
     container_name: saga-pg2
     ports:
       - 5433:5432
+    env_file:
+      - .env.example
     volumes:
       - /data/postgres:/data/postgres
 
@@ -29,6 +35,8 @@ services:
     ports:
       - 6379:6379
       - 8001:8001
+    env_file:
+      - .env.example
     volumes:
       - redis-data:/data/redis
 

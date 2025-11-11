@@ -19,16 +19,13 @@ export class ApiGatewayService {
   ) {}
 
   async getBalance(dto: GetBalanceDto) {
-    console.log('api-gateway getBalance');
     const wallet = await lastValueFrom(
       this.queryService.send('query.getBalance', dto),
     );
-    console.log({ serivce: 'api-gateway', wallet });
     return wallet;
   }
 
   async transferBalance(dto: TransferBalanceDto) {
-    console.log('api-gateway transferBalance');
     try {
       const res = await lastValueFrom(
         this.commandService.send('command.transferBalance', dto),
@@ -43,7 +40,6 @@ export class ApiGatewayService {
   }
 
   async createWallet(dto: CreateWalletDto) {
-    console.log('api-gateway createWallet');
     try {
       const res = await promisifyObservable(
         this.commandService.send('command.createWallet', dto),
@@ -58,18 +54,30 @@ export class ApiGatewayService {
   }
 
   async updateWallet(accountId: string, dto: UpdateWalletDto) {
-    const res = await lastValueFrom(
-      this.commandService.send('command.updateWallet', { accountId, ...dto }),
-    );
-    console.log({ serivce: 'api-gateway', res });
-    return res;
+    try {
+      const res = await promisifyObservable(
+        this.commandService.send('command.updateWallet', { accountId, ...dto }),
+      );
+      return res;
+    } catch (error) {
+      if (error?.message && error?.code) {
+        raiseHttpException(error.code, error.message);
+      }
+      throw error;
+    }
   }
 
   async deleteWallet(accountId: string) {
-    const res = await lastValueFrom(
-      this.commandService.send('command.updateWallet', { accountId }),
-    );
-    console.log({ serivce: 'api-gateway', res });
-    return res;
+    try {
+      const res = await promisifyObservable(
+        this.commandService.send('command.deleteWallet', { accountId }),
+      );
+      return res;
+    } catch (error) {
+      if (error?.message && error?.code) {
+        raiseHttpException(error.code, error.message);
+      }
+      throw error;
+    }
   }
 }

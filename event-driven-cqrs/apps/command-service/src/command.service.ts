@@ -37,7 +37,6 @@ export class CommandService {
   }
 
   async transferBalance(dto: TransferBalanceDto) {
-    console.log('command-service transferBalance');
     const { fromAccount, toAccount, amount, currency } = dto;
     if (amount <= 0) throw new BadRequestException('Invalid amount');
 
@@ -80,7 +79,10 @@ export class CommandService {
     this.projectionService.emit('wallet', debitEvent);
     this.projectionService.emit('wallet', creditEvent);
 
-    return { message: 'success' };
+    return {
+      status: 'success',
+      transactionId,
+    };
   }
 
   async createWallet(dto: CreateWalletDto & { accountId: string }) {
@@ -103,7 +105,7 @@ export class CommandService {
     await this.eventRepo.save(event);
 
     this.projectionService.emit('wallet', event);
-    return { message: 'success', wallet: dto };
+    return { status: 'success', wallet: dto };
   }
 
   async updateWallet(dto: UpdateWalletDto & { accountId: string }) {
@@ -117,6 +119,8 @@ export class CommandService {
     });
     await this.eventRepo.save(event);
     this.projectionService.emit('wallet', event);
+
+    return { status: 'success', wallet: dto };
   }
 
   async deleteWallet(dto: { accountId: string }) {
@@ -130,5 +134,7 @@ export class CommandService {
     });
     await this.eventRepo.save(event);
     this.projectionService.emit('wallet', event);
+
+    return { status: 'success', wallet: dto };
   }
 }

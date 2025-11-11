@@ -26,7 +26,6 @@ export class QueryService {
   }
 
   async getBalance(dto: GetBalanceDto) {
-    console.log('query-service getBalance');
     const { accountId } = dto;
     const cached = await this.redisClient.get(accountId);
     if (cached) return JSON.parse(cached);
@@ -35,8 +34,6 @@ export class QueryService {
     const wallet = await repo.findOne({
       where: dto,
     });
-
-    console.log('query-service found wallet:', wallet);
 
     if (!wallet) throw new BadRequestException('Wallet not found');
 

@@ -13,18 +13,18 @@ import { TransferBalanceDto } from './dto/transfer-balance.dto';
 import { CreateWalletDto } from './dto/create-wallet.dto';
 import { UpdateWalletDto } from './dto/update-wallet.dto';
 
-@Controller('wallet')
+@Controller('wallets')
 export class WalletController {
   constructor(private readonly walletService: WalletService) {}
 
-  @Post('balance_transfer')
+  @Post('balanceTransfer')
   transfer(@Body() dto: TransferBalanceDto) {
     return this.walletService.transferBalance(dto);
   }
 
-  @Get('balance')
+  @Get(':accountId/balance')
   getBalance(
-    @Query('account_id') accountId: string,
+    @Param('accountId') accountId: string,
     @Query('currency') currency: string,
   ) {
     return this.walletService.getBalance(accountId, currency);
@@ -35,16 +35,16 @@ export class WalletController {
     return this.walletService.createWallet(dto);
   }
 
-  @Put(':account_id')
+  @Put(':accountId')
   updateWallet(
-    @Param('account_id') accountId: string,
+    @Param('accountId') accountId: string,
     @Body() dto: UpdateWalletDto,
   ) {
     return this.walletService.updateWallet(accountId, dto);
   }
 
-  @Delete(':account_id')
-  deleteWallet(@Param('account_id') accountId: string) {
+  @Delete(':accountId')
+  deleteWallet(@Param('accountId') accountId: string) {
     return this.walletService.deleteWallet(accountId);
   }
 }

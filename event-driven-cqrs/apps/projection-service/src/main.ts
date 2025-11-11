@@ -8,7 +8,6 @@ import { validationPipeOptions } from '@app/common/config/configuration.schema';
 async function bootstrap() {
   const app = await NestFactory.create(ProjectionModule);
   const configService = app.get<ConfigService>(ConfigService);
-  console.log(process.env.RMQ_URL, process.env.QUEUE_NAME);
 
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,

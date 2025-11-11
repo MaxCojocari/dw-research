@@ -13,18 +13,18 @@ import { CreateWalletDto } from '@app/common/dto/create-wallet.dto';
 import { TransferBalanceDto } from '@app/common/dto/transfer-balance.dto';
 import { UpdateWalletDto } from '@app/common/dto/update-wallet.dto';
 
-@Controller('wallet')
+@Controller('wallets')
 export class ApiGatewayController {
   constructor(private readonly apiGatewayService: ApiGatewayService) {}
 
-  @Post('balance_transfer')
+  @Post('balanceTransfer')
   transfer(@Body() dto: TransferBalanceDto) {
     return this.apiGatewayService.transferBalance(dto);
   }
 
-  @Get('balance')
+  @Get(':accountId/balance')
   getBalance(
-    @Query('account_id') accountId: string,
+    @Param('accountId') accountId: string,
     @Query('currency') currency: string,
   ) {
     return this.apiGatewayService.getBalance({
@@ -38,16 +38,16 @@ export class ApiGatewayController {
     return this.apiGatewayService.createWallet(dto);
   }
 
-  @Put(':account_id')
+  @Put(':accountId')
   updateWallet(
-    @Param('account_id') accountId: string,
+    @Param('accountId') accountId: string,
     @Body() dto: UpdateWalletDto,
   ) {
     return this.apiGatewayService.updateWallet(accountId, dto);
   }
 
-  @Delete(':account_id')
-  deleteWallet(@Param('account_id') accountId: string) {
+  @Delete(':accountId')
+  deleteWallet(@Param('accountId') accountId: string) {
     return this.apiGatewayService.deleteWallet(accountId);
   }
 }

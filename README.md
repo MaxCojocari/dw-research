@@ -11,31 +11,32 @@ It was developed as part of an applied research study on distributed system desi
 ## Overview
 
 The goal of this project is to compare two architectural approaches for distributed financial transactions:
+
 - **Saga Pattern** — ensures distributed atomicity using compensating transactions.
 - **Event-Driven CQRS** — leverages event sourcing to achieve reproducibility and scalability through separate read and write paths.
 
-Each implementation simulates the same digital wallet use case, where users can transfer balances between accounts.  
+Each implementation simulates the same digital wallet use case, where users can transfer balances between accounts.
 
 ## Technology Stack
 
-| **Component** | **Technology Used** | **Purpose** |
-|----------------|--------------------|--------------|
-| **Backend Framework** | [Nest.js](https://nestjs.com) | Service layer and modular microservice architecture |
-| **Database** | [PostgreSQL](https://www.postgresql.org) | Transaction storage, event store, and read-model persistence |
-| **Message Queue** | [RabbitMQ](https://www.rabbitmq.com) | Asynchronous event communication |
-| **Cache / PubSub** | [Redis](https://redis.io) | Caching layer for read models and Pub/Sub messaging |
-| **Containerization** | [Docker Compose](https://docs.docker.com/compose/) | Local orchestration of services |
-| **Testing Tool** | [k6](https://k6.io) | Load and stress testing |
-| **Monitoring** | [Prometheus](https://prometheus.io) + [Grafana](https://grafana.com) | Metrics visualization and analysis |
-
+| **Component**         | **Technology Used**                                                  | **Purpose**                                                  |
+| --------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------ |
+| **Backend Framework** | [Nest.js](https://nestjs.com)                                        | Service layer and modular microservice architecture          |
+| **Database**          | [PostgreSQL](https://www.postgresql.org)                             | Transaction storage, event store, and read-model persistence |
+| **Message Queue**     | [RabbitMQ](https://www.rabbitmq.com)                                 | Asynchronous event communication                             |
+| **Cache / PubSub**    | [Redis](https://redis.io)                                            | Caching layer for read models and Pub/Sub messaging          |
+| **Containerization**  | [Docker Compose](https://docs.docker.com/compose/)                   | Local orchestration of services                              |
+| **Testing Tool**      | [k6](https://k6.io)                                                  | Load and stress testing                                      |
+| **Monitoring**        | [Prometheus](https://prometheus.io) + [Grafana](https://grafana.com) | Metrics visualization and analysis                           |
 
 ## Installation and Setup
 
 ### Clone the Repository
+
 ```bash
 git clone git@github.com:MaxCojocari/dw-research.git
 cd dw-research
-````
+```
 
 ### Install Dependencies
 
@@ -52,22 +53,22 @@ cd ../event-driven-cqrs && npm install
 
 ```bash
 cd saga
-docker compose up --build
+docker-compose -f docker-compose.prod.yml up -d --build
 ```
 
 #### Event-Driven CQRS Architecture
 
 ```bash
 cd ../event-driven-cqrs
-docker compose up --build
+docker-compose -f docker-compose.prod.yml up -d --build
 ```
 
 Each setup will spin up the necessary services:
 
-* PostgreSQL
-* RabbitMQ
-* Redis
-* Application containers
+- PostgreSQL
+- RabbitMQ
+- Redis
+- Application containers
 
 ## Architectural Overview
 
@@ -91,15 +92,15 @@ The Projection Service processes these events to update read-optimized materiali
 
 Both architectures expose a REST API for wallet transactions and balance queries.
 
-| **Method** | **Endpoint**                  | **Description**                       |
-| ---------- | ----------------------------- | ------------------------------------- |
-| `POST`     | `/wallet/balance_transfer` | Transfers balance between two wallets |
-| `GET`      | `/wallet/balance&account_id=<id>`      | Retrieves current wallet balance      |
+| **Method** | **Endpoint**                   | **Description**                       |
+| ---------- | ------------------------------ | ------------------------------------- |
+| `POST`     | `/wallets/balanceTransfer`     | Transfers balance between two wallets |
+| `GET`      | `/wallets/{accountId}/balance` | Retrieves current wallet balance      |
 
 Example request:
 
 ```json
-POST /wallet/balance_transfer
+POST /wallets/balanceTransfer
 {
     "fromAccount": "user1",
     "toAccount": "user2",
@@ -114,10 +115,10 @@ POST /wallet/balance_transfer
 
 The repository includes k6 scripts under `/load-testing` for evaluating:
 
-* Throughput (TPS)
-* Latency
-* Fault recovery time
-* Resource utilization
+- Throughput (TPS)
+- Latency
+- Fault recovery time
+- Resource utilization
 
 Run:
 
@@ -130,5 +131,5 @@ k6 run load-testing/script.js
 Metrics are collected via Prometheus and visualized in Grafana dashboards:
 
 ```bash
-docker compose up prometheus grafana
+docker-compose up prometheus grafana
 ```
