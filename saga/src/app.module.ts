@@ -1,11 +1,13 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from './config/configuration';
 import { configurationSchema } from './config/configuration.schema';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { WalletModule } from './wallet/wallet.module';
 import { RedisModule, RedisSingleOptions } from '@nestjs-modules/ioredis';
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 
+@Global()
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -59,6 +61,11 @@ import { RedisModule, RedisSingleOptions } from '@nestjs-modules/ioredis';
       },
     }),
     WalletModule,
+    PrometheusModule.register({
+      defaultMetrics: {
+        enabled: true,
+      },
+    }),
   ],
 })
 export class AppModule {}

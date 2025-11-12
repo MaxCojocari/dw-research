@@ -5,6 +5,7 @@ import { COMMAND_SERVICE, QUERY_SERVICE } from '@app/common/constants';
 import { ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { CommonModule } from '@app/common';
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 
 @Module({
   imports: [
@@ -35,6 +36,11 @@ import { CommonModule } from '@app/common';
         inject: [ConfigService],
       },
     ]),
+    PrometheusModule.register({
+      defaultMetrics: {
+        enabled: true,
+      },
+    }),
   ],
   controllers: [ApiGatewayController],
   providers: [ApiGatewayService],

@@ -8,6 +8,7 @@ import { CommonModule } from '@app/common';
 import { Wallet } from '@app/common/entities/wallet.entity';
 import { Event } from '@app/common/entities/event.entity';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 
 @Module({
   imports: [
@@ -76,6 +77,11 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     TypeOrmModule.forFeature([Event], 'event-store'),
     TypeOrmModule.forFeature([Wallet], 'shard-1'),
     TypeOrmModule.forFeature([Wallet], 'shard-2'),
+    PrometheusModule.register({
+      defaultMetrics: {
+        enabled: true,
+      },
+    }),
   ],
   controllers: [CommandController],
   providers: [CommandService],

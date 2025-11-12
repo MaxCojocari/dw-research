@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { RedisModule, RedisSingleOptions } from '@nestjs-modules/ioredis';
 import { CommonModule } from '@app/common';
 import { Wallet } from '@app/common/entities/wallet.entity';
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 
 @Module({
   imports: [
@@ -52,6 +53,11 @@ import { Wallet } from '@app/common/entities/wallet.entity';
           url: `redis://${host}:${port}`,
         };
         return res;
+      },
+    }),
+    PrometheusModule.register({
+      defaultMetrics: {
+        enabled: true,
       },
     }),
   ],

@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommonModule } from '@app/common';
 import { Wallet } from '@app/common/entities/wallet.entity';
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 
 @Module({
   imports: [
@@ -41,6 +42,11 @@ import { Wallet } from '@app/common/entities/wallet.entity';
     }),
     TypeOrmModule.forFeature([Wallet], 'shard-1'),
     TypeOrmModule.forFeature([Wallet], 'shard-2'),
+    PrometheusModule.register({
+      defaultMetrics: {
+        enabled: true,
+      },
+    }),
   ],
   controllers: [ProjectionController],
   providers: [ProjectionService],

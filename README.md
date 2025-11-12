@@ -12,8 +12,8 @@ It was developed as part of an applied research study on distributed system desi
 
 The goal of this project is to compare two architectural approaches for distributed financial transactions:
 
-- **Saga Pattern** — ensures distributed atomicity using compensating transactions.
-- **Event-Driven CQRS** — leverages event sourcing to achieve reproducibility and scalability through separate read and write paths.
+- **Saga Pattern:** ensures distributed atomicity using compensating transactions.
+- **Event-Driven CQRS:** leverages event sourcing to achieve reproducibility and scalability through separate read and write paths.
 
 Each implementation simulates the same digital wallet use case, where users can transfer balances between accounts.
 

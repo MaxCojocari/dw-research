@@ -1,0 +1,15 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: dw-research
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    static_configs:
+      - targets:
+          [
+            'api-gateway:3001',
+            'command-service:3002',
+            'projection-service:3003',
+            'query-service:3004',
+          ]
