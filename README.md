@@ -123,8 +123,10 @@ The repository includes k6 scripts under `/load-testing` for evaluating:
 Run:
 
 ```bash
-k6 run load-testing/script.js
+k6 run --summary-export=file_name.json load-testing/scripts/script_name.js
 ```
+
+Results of the tests can be viewed in `load-testing/results` directory.
 
 ### Monitoring
 
